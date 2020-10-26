@@ -56,6 +56,16 @@ class Builder
         throw new \Exception('No preset found for key: '.$preset);
     }
 
+    /**
+     * Pass through config to the base Cloudinary package
+     * 
+     * @param   array $config
+     */
+    public static function config($options = [])
+    {
+        BaseCloudinary::config($config);
+    }
+    
     protected function initializePreset()
     {
         // subclasses can override here to set defaults
