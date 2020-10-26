@@ -1,6 +1,6 @@
 # Fluent Cloudinary image transformations
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/team-zac/cloudinary.svg?style=flat-square)](https://packagist.org/packages/team-zac/cloudinary)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/team-zac/cloudinary-builder.svg?style=flat-square)](https://packagist.org/packages/team-zac/cloudinary)
 
 Cloudinary is awesome but I wanted a more expressive way to apply transformations to an image than their official package provides. This is not a replacement for the official API client, it just provides a different way to generate image URLs based on the transformations you wish to apply. It also provides a way to create pre-defined groups of transformations as presets.
 

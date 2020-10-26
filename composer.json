@@ -1,5 +1,5 @@
 {
-    "name": "teamzac/cloudinary-php",
+    "name": "teamzac/cloudinary-url-builder",
     "description": "A fluent Cloudinary URL builder",
     "keywords": [
         "team-zac",
