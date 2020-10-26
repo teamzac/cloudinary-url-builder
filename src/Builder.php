@@ -2,20 +2,59 @@
 
 namespace TeamZac\Cloudinary;
 
+use Cloudinary as BaseCloudinary;
 use TeamZac\Cloudinary\Transformations\PendingOutline;
 
 class Builder
 {
-    protected $id;
+    /** 
+     * The Cloudinary image id
+     */
+    protected string $id;
 
+    /**
+     * An array of transformations to apply
+     */
     protected $transformations = [];
+
+    /**
+     * An array of pre-defined transformations
+     */
+    public static $presets = [];
+
+    /**
+     * You can extend the main builder by providing a callback which
+     * returns a new Builder subclass with presets already applied
+     *
+     * @var string $name
+     * @var Callable $callback
+     */
+    public static function extend(string $name, $callback) 
+    {
+        static::$presets[$name] = $callback;
+    }
+
+    /**
+     * Retrieve a preset previously defined using the extend method
+     *
+     * @var string $name
+     * @return Builder subclass
+     */
+    public static function preset(string $preset)
+    {
+        if (array_key_exists($preset, static::$presets)) {
+            return static::$presets[$preset]();
+        }
+
+        throw new \Exception('No preset found for key: '.$preset);
+    }
 
     public function __construct()
     {
-        $this->initializePresets();
+        $this->initializePreset();
     }
 
-    protected function initializePresets()
+    protected function initializePreset()
     {
         // subclasses can override here to set defaults
     }
@@ -24,6 +63,11 @@ class Builder
     {
         $this->id = $id;
         return $this;
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     public function transform(array $options)
@@ -214,12 +258,13 @@ class Builder
         return $this->addEffect('oil_paint:'.$strength);
     }
 
-    public function outline($mode, $width = 5, $blur = 0, $callback = null)
+    public function outline($mode = 'inner', $width = 5, $blur = 0)
     {
-        $pending = new PendingOutline($mode, $width, $blur);
-
-        if (is_callable($callback)) {
-            $callback($pending);
+        if (is_callable($mode)) {
+            $pending = new PendingOutline('inner', $width, $blur);
+            $mode($pending);
+        } else {
+            $pending = new PendingOutline($mode, $width, $blur);
         }
 
         return $this->addEffect($pending->getValue());
@@ -311,14 +356,28 @@ class Builder
         return $this->addEffect('vibrance:'.$value);
     }
 
+    public function vignette($value)
+    {
+        return $this->addEffect('vignette:'.$value);
+    }
+
     public function addEffect($value)
     {
         $this->transformations[] = ['effect' => $value];
         return $this;
     }
 
-    public function build()
+    /**
+     * Return the URL as a string. Cloudinary's library does not allow passing
+     * the transformations array by reference, hence the temporary variable.
+     *
+     * @return string */
+    public function getUrl()
     {
-        return (new CloudinaryImage($this->id))->withTransformations($this->transformations);
+        $transformations = [
+            'transformation' => $this->transformations,
+        ];
+
+        return BaseCloudinary::cloudinary_url($this->id, $transformations);
     }
 }

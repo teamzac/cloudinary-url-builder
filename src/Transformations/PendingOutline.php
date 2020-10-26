@@ -17,6 +17,24 @@ class PendingOutline
         $this->blur = $blur;
     }
 
+    public function mode($mode)
+    {
+        $this->mode = $mode;
+        return $this;
+    }
+
+    public function width($width)
+    {
+        $this->width = $width;
+        return $this;
+    }
+
+    public function blur($blur)
+    {
+        $this->blur = $blur;
+        return $this;
+    }
+
     public function color($color, $hex = null)
     {
         if ($hex) {

@@ -51,12 +51,6 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function register()
     {
-        // Automatically apply the package configuration
         $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'cloudinary');
-
-        // Register the main class to use with the facade
-        $this->app->singleton('cloudinary', function () {
-            return new Cloudinary;
-        });
     }
 }
