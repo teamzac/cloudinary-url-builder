@@ -9,7 +9,7 @@ Cloudinary is awesome but I wanted a more expressive way to apply transformation
 You can install the package via composer:
 
 ```bash
-composer require team-zac/cloudinary
+composer require team-zac/cloudinary-url-builder
 ```
 
 ## Usage
