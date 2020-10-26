@@ -93,8 +93,16 @@ Cloudinary::id('image.jpg')
 	->outline(function($outline) {
 		$outline->mode('outer')
 			->width(5)
-			->color('rgb', 'ae12d2');
+			->color('rgb:30a940');
 	});
+
+// you can also use the Color class if you prefer
+Cloudinary::id('image.jpg')
+  ->outline(function($outline) {
+    $outline->mode('outer')
+      ->width(5)
+      ->color(TeamZac\Cloudinary\Color::hex('30a940'));
+  });
 
 ```
 
