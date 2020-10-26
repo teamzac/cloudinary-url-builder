@@ -2,7 +2,7 @@
 
 namespace TeamZac\Cloudinary;
 
-use Cloudinary;
+use Cloudinary as BaseCloudinary;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 class ServiceProvider extends BaseServiceProvider
@@ -41,7 +41,7 @@ class ServiceProvider extends BaseServiceProvider
         }
 
         if (count($config)) {
-            Cloudinary::config($config);
+            BaseCloudinary::config($config);
         }
 
     }
