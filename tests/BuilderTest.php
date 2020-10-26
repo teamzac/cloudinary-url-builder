@@ -229,7 +229,7 @@ class BuilderTest extends TestCase
     public function black_white()
     {
         $image = Cloudinary::id('test.png')
-            ->blackWhite()
+            ->blackwhite()
             ->build();
 
         $this->assertCorrectTransformations('e_blackwhite', $image);
@@ -443,6 +443,146 @@ class BuilderTest extends TestCase
             ->build();
 
         $this->assertCorrectTransformations('e_grayscale', $image);
+    }
+
+    /** @test */
+    public function green() 
+    {
+        $image = Cloudinary::id('test.png')
+            ->green(50)
+            ->build();
+
+        $this->assertCorrectTransformations('e_green:50', $image);
+    }
+
+    /** @test */
+    public function hue() 
+    {
+        $image = Cloudinary::id('test.png')
+            ->hue(50)
+            ->build();
+
+        $this->assertCorrectTransformations('e_hue:50', $image);
+    }
+
+    /** @test */
+    public function loop() 
+    {
+        $image = Cloudinary::id('test.png')
+            ->loop(50)
+            ->build();
+
+        $this->assertCorrectTransformations('e_loop:50', $image);
+    }
+
+    /** @test */
+    public function makeTransparent() 
+    {
+        $image = Cloudinary::id('test.png')
+            ->makeTransparent(50)
+            ->build();
+
+        $this->assertCorrectTransformations('e_make_transparent:50', $image);
+    }
+
+    /** @test */
+    public function orderedDither() 
+    {
+        $image = Cloudinary::id('test.png')
+            ->orderedDither(50)
+            ->build();
+
+        $this->assertCorrectTransformations('e_ordered_dither:50', $image);
+    }
+
+    /** @test */
+    public function pixelate() 
+    {
+        $image = Cloudinary::id('test.png')
+            ->pixelate(50)
+            ->build();
+
+        $this->assertCorrectTransformations('e_pixelate:50', $image);
+    }
+
+    /** @test */
+    public function pixelateFaces() 
+    {
+        $image = Cloudinary::id('test.png')
+            ->pixelateFaces(50)
+            ->build();
+
+        $this->assertCorrectTransformations('e_pixelate_faces:50', $image);
+    }
+
+    /** @test */
+    public function red() 
+    {
+        $image = Cloudinary::id('test.png')
+            ->red(50)
+            ->build();
+
+        $this->assertCorrectTransformations('e_red:50', $image);
+    }
+
+    /** @test */
+    public function saturation() 
+    {
+        $image = Cloudinary::id('test.png')
+            ->saturation(50)
+            ->build();
+
+        $this->assertCorrectTransformations('e_saturation:50', $image);
+    }
+
+    /** @test */
+    public function sepia() 
+    {
+        $image = Cloudinary::id('test.png')
+            ->sepia(50)
+            ->build();
+
+        $this->assertCorrectTransformations('e_sepia:50', $image);
+    }
+
+    /** @test */
+    public function tiltShift() 
+    {
+        $image = Cloudinary::id('test.png')
+            ->tiltShift(50)
+            ->build();
+
+        $this->assertCorrectTransformations('e_tilt_shift:50', $image);
+    }
+
+    /** @test */
+    public function vectorize() 
+    {
+        $image = Cloudinary::id('test.png')
+            ->vectorize()
+            ->build();
+
+        $this->assertCorrectTransformations('e_vectorize', $image);
+    }
+
+    /** @test */
+    public function vibrance() 
+    {
+        $image = Cloudinary::id('test.png')
+            ->vibrance(50)
+            ->build();
+
+        $this->assertCorrectTransformations('e_vibrance:50', $image);
+    }
+
+    /** @test */
+    public function vignette() 
+    {
+        $image = Cloudinary::id('test.png')
+            ->vignette(50)
+            ->build();
+
+        $this->assertCorrectTransformations('e_vignette:50', $image);
     }
 
     protected function assertCorrectTransformations($correct, $image)

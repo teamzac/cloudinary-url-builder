@@ -26,84 +26,15 @@ class Builder
         return $this;
     }
 
-    public function resize($width, $height, $cropMode = 'scale')
-    {
-        return $this->transform([
-            'width' => $width,
-            'height' => $height,
-            'crop' => $cropMode,
-        ]);
-    }
-
     public function transform(array $options)
     {
         $this->transformations[] = $options;
         return $this;
     }
 
-    public function brightness($value)
-    {
-        return $this->addEffect('brightness:'.$value);
-    }
-
-    public function color($effect, $modifier = null)
-    {
-        return $this->addEffect($effect . ($modifier ? ':'.$modifier : ''));
-    }
-
-    public function outline($mode, $width = 5, $blur = 0, $callback = null)
-    {
-        $pending = new PendingOutline($mode, $width, $blur);
-
-        if (is_callable($callback)) {
-            $callback($pending);
-        }
-
-        return $this->addEffect($pending->getValue());
-    }
-
-    public function tint($amount, ...$colors)
-    {
-        return $this->addEffect(
-            sprintf('tint:%d:%s', $amount, implode(':', $colors))
-        );
-    }
-
-    public function equalizedTint($amount, ...$colors)
-    {
-        return $this->addEffect(
-            sprintf('tint:equalize:%d:%s', $amount, implode(':', $colors))
-        );
-    }
-
-    public function blur($value)
-    {
-        return $this->addEffect('blur:'.$value);
-    }
-
-    public function blurFaces($value)
-    {
-        return $this->addEffect('blur_faces:'.$value);
-    }
-
-    public function blurRegion($value)
-    {
-        return $this->addEffect('blur_region:'.$value);
-    }
-
-    public function removeBackground()
-    {
-        return $this->addEffect('bgremoval');
-    }
-
     public function accelerate($value)
     {
         return $this->addEffect('accelerate:'.$value);
-    }
-
-    public function removeRedEye()
-    {
-        return $this->addEffect('adv_redeye');
     }
 
     public function assistColorblind()
@@ -141,14 +72,44 @@ class Builder
         return $this->addEffect('blue:'.$value);
     }
 
+    public function blur($value)
+    {
+        return $this->addEffect('blur:'.$value);
+    }
+
+    public function blurFaces($value)
+    {
+        return $this->addEffect('blur_faces:'.$value);
+    }
+
+    public function blurRegion($value)
+    {
+        return $this->addEffect('blur_region:'.$value);
+    }
+
     public function boomerang()
     {
         return $this->addEffect('boomerang');
     }
 
+    public function brightness($value)
+    {
+        return $this->addEffect('brightness:'.$value);
+    }
+
     public function brightnessHsb()
     {
         return $this->addEffect('brightness_hsb');
+    }
+
+    public function cartoonify()
+    {
+        return $this->addEffect('cartoonify');
+    }
+
+    public function color($effect, $modifier = null)
+    {
+        return $this->addEffect($effect . ($modifier ? ':'.$modifier : ''));
     }
 
     public function colorize($value)
@@ -171,6 +132,18 @@ class Builder
         return $this->addEffect('displace');
     }
 
+    public function enhance()
+    {
+        return $this->addEffect('viesus_correct');
+    }
+
+    public function equalizedTint($amount, ...$colors)
+    {
+        return $this->addEffect(
+            sprintf('tint:equalize:%d:%s', $amount, implode(':', $colors))
+        );
+    }
+
     public function fade($strength = 0)
     {
         return $this->addEffect('fade:'.$strength);
@@ -179,6 +152,11 @@ class Builder
     public function fillLight($strength = 0)
     {
         return $this->addEffect('fill_light:'.$strength);
+    }
+
+    public function filter($mode)
+    {
+        return $this->addEffect('art:'.$mode);
     }
 
     public function gamma($strength = 0)
@@ -196,15 +174,104 @@ class Builder
         return $this->addEffect('grayscale');
     }
 
-
-    public function sharpen()
+    public function green($value)
     {
-        return $this->addEffect('sharpen');
+        return $this->addEffect('green:'.$value);
+    }
+
+    public function hue($value)
+    {
+        return $this->addEffect('hue:'.$value);
+    }
+
+    public function improve($mode)
+    {
+        return $this->addEffect('improve:'.$mode);
+    }
+
+    public function loop($mode)
+    {
+        return $this->addEffect('loop:'.$mode);
+    }
+
+    public function makeTransparent($mode)
+    {
+        return $this->addEffect('make_transparent:'.$mode);
+    }
+
+    public function noise($value)
+    {
+        return $this->addEffect('noise:'. $value);
+    }
+
+    public function orderedDither($value)
+    {
+        return $this->addEffect('ordered_dither:'. $value);
+    }
+
+    public function oilPaint($strength)
+    {
+        return $this->addEffect('oil_paint:'.$strength);
+    }
+
+    public function outline($mode, $width = 5, $blur = 0, $callback = null)
+    {
+        $pending = new PendingOutline($mode, $width, $blur);
+
+        if (is_callable($callback)) {
+            $callback($pending);
+        }
+
+        return $this->addEffect($pending->getValue());
     }
 
     public function overlay($mode, $overlay)
     {
         return $this->addEffect($mode.','.$overlay);
+    }
+
+    public function pixelate($value)
+    {
+        return $this->addEffect('pixelate:'.$value);
+    }
+
+    public function pixelateFaces($value)
+    {
+        return $this->addEffect('pixelate_faces:'.$value);
+    }
+
+    public function red($value)
+    {
+        return $this->addEffect('red:'.$value);
+    }
+
+    public function removeBackground()
+    {
+        return $this->addEffect('bgremoval');
+    }
+
+    public function removeRedEye()
+    {
+        return $this->addEffect('adv_redeye');
+    }
+
+    public function resize($width, $height, $cropMode = 'scale')
+    {
+        return $this->transform([
+            'width' => $width,
+            'height' => $height,
+            'crop' => $cropMode,
+        ]);
+    }
+
+    public function saturation($value)
+    {
+        return $this->addEffect('saturation:'.$value);
+    }
+
+    public function sepia($value)
+    {
+        return $this->addEffect('sepia:'.$value);
     }
 
     public function shadow($strength, $color, $x, $y)
@@ -217,29 +284,31 @@ class Builder
         ]);
     }
 
-    public function improve($mode)
+    public function sharpen()
     {
-        return $this->addEffect('improve:'.$mode);
+        return $this->addEffect('sharpen');
     }
 
-    public function enhance()
+    public function tiltShift($value)
     {
-        return $this->addEffect('viesus_correct');
+        return $this->addEffect('tilt_shift:'.$value);
     }
 
-    public function filter($mode)
+    public function tint($amount, ...$colors)
     {
-        return $this->addEffect('art:'.$mode);
+        return $this->addEffect(
+            sprintf('tint:%d:%s', $amount, implode(':', $colors))
+        );
     }
 
-    public function oilPaint($strength)
+    public function vectorize()
     {
-        return $this->addEffect('oil_paint:'.$strength);
+        return $this->addEffect('vectorize');
     }
 
-    public function cartoonify()
+    public function vibrance($value)
     {
-        return $this->addEffect('cartoonify');
+        return $this->addEffect('vibrance:'.$value);
     }
 
     public function addEffect($value)
