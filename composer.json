@@ -46,10 +46,7 @@
         "laravel": {
             "providers": [
                 "TeamZac\\Cloudinary\\ServiceProvider"
-            ],
-            "aliases": {
-                "Cloudinary": "TeamZac\\Cloudinary\\Facades\\Cloudinary"
-            }
+            ]
         }
     }
 }
