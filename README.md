@@ -14,9 +14,17 @@ composer require team-zac/cloudinary
 
 ## Usage
 
-This package uses the official Cloudinary PHP library under the hood. If you're using Laravel, the service provider is auto-registered (5.5+) and will set a default cloud name on the Cloudinary package based on the value in this package's config. You can publish the config file with `php artisan vendor:publish` or just set `CLOUDINARY_CLOUD_NAME` in your .env file.
+This package uses the official Cloudinary PHP library under the hood, which has a variety of global config options. If you are using Laravel, the auto-registered service provider for this package will set the default cloud name for you based on the value in this package's config.
 
-You can use the facade (or reference the `TeamZac\Cloudinary\Builder` class directly) to apply transformations and generate the URL.
+You can set this value by adding a key for `CLOUDINARY_CLOUD_NAME` to your .env file. If you'd like to take ownership of the package's config file, you can run the following command:
+
+```bash
+php artisan vendor:publish
+```
+
+and choose the `TeamZac\Cloudinary\ServiceProvider` option.
+
+The core functionality is provided with the `TeamZac\Cloudinary\Builder` class. You can access it directly, or utilize the facade, to apply transformations and generate an image URL.
 
 ``` php
 Cloudinary::id('image.jpg')
@@ -26,7 +34,7 @@ Cloudinary::id('image.jpg')
 	->getUrl();
 ```
 
-To build a pre-defined set of transformations, you can subclass the Builder class and override the `initializePreset` method. There, you can apply all the transformations you want. This method gets called during instantiation, so if you need to override the constructor (for DI or any other reasons) make sure to call this method or call `parent::__construct()`.
+To build a pre-defined set of transformations, you can subclass the Builder class and override the `initializePreset` method. There, you can apply all the transformations you want. This method gets called before building the URL, and only once in case you plan to reuse the same instance of your preset class.
 
 ``` php
 <?php
@@ -47,7 +55,7 @@ class MyPreset extends Builder
 
 ```
 
-You can instantiate your own preset classes directly, or you can extend the default builder in a service provider to name your presets, and then create a new instance using the `preset` method:
+You can instantiate your own preset classes directly, or you can extend the Builder in a service provider to name your presets. You can then create a new instance using the `preset` method:
 
 ```php
 // in a service provider
@@ -62,23 +70,27 @@ You can instantiate your own preset classes directly, or you can extend the defa
 	$url = Cloudinary::preset('my-preset')->id('image.jpg')->getUrl();
 ```
 
-Most of the effects Cloudinary provides are either parameterless or just allow a single value. In some cases, the effects can be a bit more complex. For example, you can create an Outline effect using the `outline` method, with an optional callback to customize additional options:
+This could be useful for something like a hero image on a blog, where you want a similar transformation to be applied to each image but might have a light and dark variant. You could store the transformation preset on the post model and dynamically refer to it in your template.
+
+Most of the effects Cloudinary provides are either parameterless or just allow a single value. In many cases, we've included the same defaults that Cloudinary uses so you can exclude passing any parameters if you're fine with the defaults. We still need to add Cloudinary's defaults to some of the effect methods.
+
+In some cases, the effects can be a bit more complex. For example, you can create an Outline effect using the `outline` method, with an optional callback to customize additional options:
 
 ```php
 // with just the main options
 Cloudinary::id('image.jpg')
 	->outline('inner', 5, 1000);
 
-// with a callback as the first parameter. Cloudinary's defaults will be used
+// with a callback as the first parameter. You'll receive an instance of TeamZac\Cloudinary\Transformations\PendingOutline
 Cloudinary::id('image.jpg')
-	->outline(function(PendingOutline $outline) {
+	->outline(function($outline) {
 		$outline->mode('inner')
 			->width(5)
 			->color('orange');
 	});
 
 Cloudinary::id('image.jpg')
-	->outline(function(PendingOutline $outline) {
+	->outline(function($outline) {
 		$outline->mode('outer')
 			->width(5)
 			->color('rgb', 'ae12d2');
@@ -93,12 +105,8 @@ composer test
 ```
 
 
-# todo
+# Todo
 
-https://cloudinary.com/documentation/image_transformation_reference
-
-- May add a PendingTint callback to reduce duplication between tint() and equalizedTint()
-- maybe a dedicated Color class, since colors can either be provided as a string CSS name or "rgb:<hexcode>"
 - several effects whose options are more involved have yet to be added to this package
 
 ### Changelog
@@ -116,12 +124,9 @@ If you discover any security related issues, please email chad@zactax.com instea
 ## Credits
 
 - [Chad Janicek](https://github.com/team-zac)
+- [Laravel Package Boilerplate](https://laravelpackageboilerplate.com)
 - [All Contributors](../../contributors)
 
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
-
-## Laravel Package Boilerplate
-
-This package was generated using the [Laravel Package Boilerplate](https://laravelpackageboilerplate.com).

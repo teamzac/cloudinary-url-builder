@@ -17,6 +17,13 @@ class Builder
      */
     protected $transformations = [];
 
+    /** 
+     * Keep track of whether the initializePreset method has been called
+     *
+     * @var boolean
+     */
+    protected $hasBeenInitialized = false;
+
     /**
      * An array of pre-defined transformations
      */
@@ -49,11 +56,6 @@ class Builder
         throw new \Exception('No preset found for key: '.$preset);
     }
 
-    public function __construct()
-    {
-        $this->initializePreset();
-    }
-
     protected function initializePreset()
     {
         // subclasses can override here to set defaults
@@ -78,12 +80,12 @@ class Builder
 
     public function accelerate($value)
     {
-        return $this->addEffect('accelerate:'.$value);
+        return $this->addEffect('accelerate', $value);
     }
 
-    public function assistColorblind()
+    public function assistColorblind($assistType = 10)
     {
-        return $this->addEffect('assist_colorblind');
+        return $this->addEffect('assist_colorblind', $assistType);
     }
 
     public function autoBrightness()
@@ -113,22 +115,22 @@ class Builder
 
     public function blue($value)
     {
-        return $this->addEffect('blue:'.$value);
+        return $this->addEffect('blue', $value);
     }
 
     public function blur($value)
     {
-        return $this->addEffect('blur:'.$value);
+        return $this->addEffect('blur', $value);
     }
 
     public function blurFaces($value)
     {
-        return $this->addEffect('blur_faces:'.$value);
+        return $this->addEffect('blur_faces', $value);
     }
 
     public function blurRegion($value)
     {
-        return $this->addEffect('blur_region:'.$value);
+        return $this->addEffect('blur_region', $value);
     }
 
     public function boomerang()
@@ -138,7 +140,7 @@ class Builder
 
     public function brightness($value)
     {
-        return $this->addEffect('brightness:'.$value);
+        return $this->addEffect('brightness', $value);
     }
 
     public function brightnessHsb()
@@ -153,22 +155,22 @@ class Builder
 
     public function color($effect, $modifier = null)
     {
-        return $this->addEffect($effect . ($modifier ? ':'.$modifier : ''));
+        return $this->addEffect($effect, $modifier);
     }
 
     public function colorize($value)
     {
-        return $this->addEffect('colorize:'.$value);
+        return $this->addEffect('colorize', $value);
     }
 
     public function contrast($strength = 0)
     {
-        return $this->addEffect('contrast:'.$strength);
+        return $this->addEffect('contrast', $strength);
     }
 
     public function deshake($strength = 0)
     {
-        return $this->addEffect('deshake:'.$strength);
+        return $this->addEffect('deshake', $strength);
     }
 
     public function displace()
@@ -183,34 +185,32 @@ class Builder
 
     public function equalizedTint($amount, ...$colors)
     {
-        return $this->addEffect(
-            sprintf('tint:equalize:%d:%s', $amount, implode(':', $colors))
-        );
+        return $this->addEffect('tint', 'equalize', $amount, ...$colors);
     }
 
     public function fade($strength = 0)
     {
-        return $this->addEffect('fade:'.$strength);
+        return $this->addEffect('fade', $strength);
     }
 
     public function fillLight($strength = 0)
     {
-        return $this->addEffect('fill_light:'.$strength);
+        return $this->addEffect('fill_light', $strength);
     }
 
     public function filter($mode)
     {
-        return $this->addEffect('art:'.$mode);
+        return $this->addEffect('art', $mode);
     }
 
     public function gamma($strength = 0)
     {
-        return $this->addEffect('gamma:'.$strength);
+        return $this->addEffect('gamma', $strength);
     }
 
     public function gradientFade($strength = 0)
     {
-        return $this->addEffect('gradient_fade:'.$strength);
+        return $this->addEffect('gradient_fade', $strength);
     }
 
     public function grayscale()
@@ -220,42 +220,42 @@ class Builder
 
     public function green($value)
     {
-        return $this->addEffect('green:'.$value);
+        return $this->addEffect('green', $value);
     }
 
     public function hue($value)
     {
-        return $this->addEffect('hue:'.$value);
+        return $this->addEffect('hue', $value);
     }
 
     public function improve($mode)
     {
-        return $this->addEffect('improve:'.$mode);
+        return $this->addEffect('improve', $mode);
     }
 
     public function loop($mode)
     {
-        return $this->addEffect('loop:'.$mode);
+        return $this->addEffect('loop', $mode);
     }
 
     public function makeTransparent($mode)
     {
-        return $this->addEffect('make_transparent:'.$mode);
+        return $this->addEffect('make_transparent', $mode);
     }
 
     public function noise($value)
     {
-        return $this->addEffect('noise:'. $value);
+        return $this->addEffect('noise', $value);
     }
 
     public function orderedDither($value)
     {
-        return $this->addEffect('ordered_dither:'. $value);
+        return $this->addEffect('ordered_dither', $value);
     }
 
     public function oilPaint($strength)
     {
-        return $this->addEffect('oil_paint:'.$strength);
+        return $this->addEffect('oil_paint', $strength);
     }
 
     public function outline($mode = 'inner', $width = 5, $blur = 0)
@@ -267,27 +267,27 @@ class Builder
             $pending = new PendingOutline($mode, $width, $blur);
         }
 
-        return $this->addEffect($pending->getValue());
+        return $this->addRawEffect($pending->getValue());
     }
 
     public function overlay($mode, $overlay)
     {
-        return $this->addEffect($mode.','.$overlay);
+        return $this->addRawEffect($mode.','.$overlay);
     }
 
     public function pixelate($value)
     {
-        return $this->addEffect('pixelate:'.$value);
+        return $this->addEffect('pixelate', $value);
     }
 
     public function pixelateFaces($value)
     {
-        return $this->addEffect('pixelate_faces:'.$value);
+        return $this->addEffect('pixelate_faces', $value);
     }
 
     public function red($value)
     {
-        return $this->addEffect('red:'.$value);
+        return $this->addEffect('red', $value);
     }
 
     public function removeBackground()
@@ -298,6 +298,11 @@ class Builder
     public function removeRedEye()
     {
         return $this->addEffect('adv_redeye');
+    }
+
+    public function replaceColor($toColor, $tolerance = 50, $fromColor = null)
+    {
+        return $this->addEffect('replace_color', $toColor, $tolerance, $fromColor);
     }
 
     public function resize($width, $height, $cropMode = 'scale')
@@ -311,12 +316,17 @@ class Builder
 
     public function saturation($value)
     {
-        return $this->addEffect('saturation:'.$value);
+        return $this->addEffect('saturation', $value);
+    }
+
+    public function simulateColorblind($condition = 'deuteranopia')
+    {
+        return $this->addEffect('simulate_colorblind', $condition);
     }
 
     public function sepia($value)
     {
-        return $this->addEffect('sepia:'.$value);
+        return $this->addEffect('sepia', $value);
     }
 
     public function shadow($strength, $color, $x, $y)
@@ -336,14 +346,12 @@ class Builder
 
     public function tiltShift($value)
     {
-        return $this->addEffect('tilt_shift:'.$value);
+        return $this->addEffect('tilt_shift', $value);
     }
 
     public function tint($amount, ...$colors)
     {
-        return $this->addEffect(
-            sprintf('tint:%d:%s', $amount, implode(':', $colors))
-        );
+        return $this->addEffect('tint', $amount, ...$colors);
     }
 
     public function vectorize()
@@ -353,15 +361,21 @@ class Builder
 
     public function vibrance($value)
     {
-        return $this->addEffect('vibrance:'.$value);
+        return $this->addEffect('vibrance', $value);
     }
 
     public function vignette($value)
     {
-        return $this->addEffect('vignette:'.$value);
+        return $this->addEffect('vignette', $value);
     }
 
-    public function addEffect($value)
+    public function addEffect(...$values)
+    {
+        $this->transformations[] = ['effect' => implode(':', array_filter($values))];
+        return $this;
+    }
+
+    public function addRawEffect($value)
     {
         $this->transformations[] = ['effect' => $value];
         return $this;
@@ -374,6 +388,10 @@ class Builder
      * @return string */
     public function getUrl()
     {
+        if (!$this->hasBeenInitialized) {
+            $this->initializePreset();
+        }
+
         $transformations = [
             'transformation' => $this->transformations,
         ];

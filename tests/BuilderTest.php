@@ -4,6 +4,7 @@ namespace TeamZac\Cloudinary\Tests;
 
 use Orchestra\Testbench\TestCase;
 use TeamZac\Cloudinary\Builder;
+use TeamZac\Cloudinary\Color;
 use TeamZac\Cloudinary\Facades\Cloudinary;
 use TeamZac\Cloudinary\ServiceProvider;
 
@@ -24,7 +25,7 @@ class BuilderTest extends TestCase
     }
 
     /** @test */
-    public function the_builder_can_resize_the_image()
+    public function resize_fill_mode()
     {
         $image = Cloudinary::id('test.png')
             ->resize(300, 300, 'fill');
@@ -33,7 +34,7 @@ class BuilderTest extends TestCase
     }
 
     /** @test */
-    public function by_default_resizing_uses_scale_mode()
+    public function resize_scale_mode()
     {
         $image = Cloudinary::id('test.png')
             ->resize(300, 400);
@@ -42,7 +43,7 @@ class BuilderTest extends TestCase
     }
 
     /** @test */
-    public function the_builder_can_set_brightness()
+    public function brightness()
     {
         $image = Cloudinary::id('test.png')
             ->brightness(50);
@@ -51,7 +52,7 @@ class BuilderTest extends TestCase
     }
 
     /** @test */
-    public function the_builder_can_set_color_effects()
+    public function color()
     {
         $image = Cloudinary::id('test.png')
             ->color('saturation', 50);
@@ -60,7 +61,7 @@ class BuilderTest extends TestCase
     }
 
     /** @test */
-    function the_builder_can_add_an_outline()
+    function outline()
     {
         $image = Cloudinary::id('test.png')
             ->outline('inner', 5, 1000);
@@ -69,7 +70,7 @@ class BuilderTest extends TestCase
     }
 
     /** @test */
-    function the_builder_can_modify_outlines_with_a_callback()
+    function outlines_with_callback()
     {
         $image = Cloudinary::id('test.png')
             ->outline(function($outline) {
@@ -81,19 +82,31 @@ class BuilderTest extends TestCase
     }
 
     /** @test */
-    function the_builder_can_modify_outlines_with_a_callback_using_rgb()
+    function outlines_with_callback_using_named_color()
+    {
+        $image = Cloudinary::id('test.png')
+            ->outline(function($outline) {
+                $outline->width(5)
+                    ->blur(1000)
+                    ->color(Color::named('orange'));
+            });
+        $this->assertCorrectTransformations('e_outline:inner:5:1000,co_orange', $image);
+    }
+
+    /** @test */
+    function outlines_with_callback_using_rgb()
     {
         $image = Cloudinary::id('test.png')
             ->outline(function($outline) {
                 $outline->mode('outer')
                     ->blur(1000)
-                    ->color('rgb', 777);
+                    ->color(Color::hex(777));
             });
         $this->assertCorrectTransformations('e_outline:outer:5:1000,co_rgb:777', $image);
     }
 
     /** @test */
-    function the_builder_can_add_a_tint()
+    function tint()
     {
         $image = Cloudinary::id('test.png')
             ->tint(40, 'red', 'blue');
@@ -102,7 +115,7 @@ class BuilderTest extends TestCase
     }
 
     /** @test */
-    function the_builder_can_add_an_equalized_tint()
+    function equalizedTint()
     {
         $image = Cloudinary::id('test.png')
             ->equalizedTint(40, 'red', 'blue');
@@ -111,7 +124,7 @@ class BuilderTest extends TestCase
     }
 
     /** @test */
-    public function the_builder_can_set_blur()
+    public function blur()
     {
         $image = Cloudinary::id('test.png')
             ->blur(250);
@@ -120,7 +133,7 @@ class BuilderTest extends TestCase
     }
 
     /** @test */
-    public function the_builder_can_set_blur_faces()
+    public function blurFaces()
     {
         $image = Cloudinary::id('test.png')
             ->blurFaces(250);
@@ -129,7 +142,7 @@ class BuilderTest extends TestCase
     }
 
     /** @test */
-    public function the_builder_can_set_blur_regions()
+    public function blurRegion()
     {
         $image = Cloudinary::id('test.png')
             ->blurRegion(250);
@@ -138,7 +151,7 @@ class BuilderTest extends TestCase
     }
 
     /** @test */
-    public function the_builder_can_remove_backgrounds()
+    public function removeBackground()
     {
         $image = Cloudinary::id('test.png')
             ->removeBackground();
@@ -147,7 +160,7 @@ class BuilderTest extends TestCase
     }
 
     /** @test */
-    public function accelerate_effect()
+    public function accelerate()
     {
         $image = Cloudinary::id('test.png')
             ->accelerate(50);
@@ -156,7 +169,7 @@ class BuilderTest extends TestCase
     }
 
     /** @test */
-    public function redeye_removal()
+    public function removeRedEye()
     {
         $image = Cloudinary::id('test.png')
             ->removeRedEye();
@@ -165,16 +178,16 @@ class BuilderTest extends TestCase
     }
 
     /** @test */
-    public function assist_colorblind()
+    public function assistColorblind()
     {
         $image = Cloudinary::id('test.png')
-            ->assistColorblind();
+            ->assistColorblind(20);
 
-        $this->assertCorrectTransformations('e_assist_colorblind', $image);
+        $this->assertCorrectTransformations('e_assist_colorblind:20', $image);
     }
 
     /** @test */
-    public function auto_brightness()
+    public function autoBrightness()
     {
         $image = Cloudinary::id('test.png')
             ->autoBrightness();
@@ -183,7 +196,7 @@ class BuilderTest extends TestCase
     }
 
     /** @test */
-    public function auto_color()
+    public function autoColor()
     {
         $image = Cloudinary::id('test.png')
             ->autoColor();
@@ -192,7 +205,7 @@ class BuilderTest extends TestCase
     }
 
     /** @test */
-    public function auto_contrast()
+    public function autoContrast()
     {
         $image = Cloudinary::id('test.png')
             ->autoContrast();
@@ -201,7 +214,7 @@ class BuilderTest extends TestCase
     }
 
     /** @test */
-    public function auto_saturation()
+    public function autoSaturation()
     {
         $image = Cloudinary::id('test.png')
             ->autoSaturation();
@@ -210,7 +223,7 @@ class BuilderTest extends TestCase
     }
 
     /** @test */
-    public function black_white()
+    public function blackwhite()
     {
         $image = Cloudinary::id('test.png')
             ->blackwhite();
@@ -237,12 +250,21 @@ class BuilderTest extends TestCase
     }
 
     /** @test */
-    public function brightness_hsb()
+    public function brightnessHsb()
     {
         $image = Cloudinary::id('test.png')
             ->brightnessHsb();
 
         $this->assertCorrectTransformations('e_brightness_hsb', $image);
+    }
+
+    /** @test */
+    public function cartoonify()
+    {
+        $image = Cloudinary::id('test.png')
+            ->cartoonify();
+
+        $this->assertCorrectTransformations('e_cartoonify', $image);
     }
 
     /** @test */
@@ -252,82 +274,6 @@ class BuilderTest extends TestCase
             ->colorize(50);
 
         $this->assertCorrectTransformations('e_colorize:50', $image);
-    }
-
-
-
-
-
-    /** @test */
-    public function the_builder_can_sharpen()
-    {
-        $image = Cloudinary::id('test.png')
-            ->sharpen();
-
-        $this->assertCorrectTransformations('e_sharpen', $image);
-    }
-
-    /** @test */
-    public function the_builder_can_add_overlays()
-    {
-        $image = Cloudinary::id('test.png')
-            ->overlay('screen', 'overlay');
-
-        $this->assertCorrectTransformations('e_screen,overlay', $image);
-    }
-
-    /** @test */
-    public function the_builder_can_add_shadows()
-    {
-        $image = Cloudinary::id('test.png')
-            ->shadow(50, 'rgb:ff0000', 10, 10);
-
-        $this->assertCorrectTransformations('co_rgb:ff0000,e_shadow:50,x_10,y_10', $image);
-    }
-
-    /** @test */
-    public function the_builder_can_add_improvement_effects()
-    {
-        $image = Cloudinary::id('test.png')
-            ->improve('outdoor');
-
-        $this->assertCorrectTransformations('e_improve:outdoor', $image);
-    }
-
-    /** @test */
-    public function the_builder_can_add_viesus_enhancements()
-    {
-        $image = Cloudinary::id('test.png')
-            ->enhance();
-
-        $this->assertCorrectTransformations('e_viesus_correct', $image);
-    }
-
-    /** @test */
-    public function the_builder_can_add_artistic_filters()
-    {
-        $image = Cloudinary::id('test.png')
-            ->filter('zorro');
-
-        $this->assertCorrectTransformations('e_art:zorro', $image);
-    }
-
-    /** @test */
-    public function the_builder_can_add_oil_paint_styles()
-    {
-        $image = Cloudinary::id('test.png')
-            ->oilPaint(70);
-
-        $this->assertCorrectTransformations('e_oil_paint:70', $image);
-    }
-
-    /** @test */
-    public function the_builder_can_cartoonify()
-    {
-        $image = Cloudinary::id('test.png')
-            ->cartoonify();
-
-        $this->assertCorrectTransformations('e_cartoonify', $image);
     }
 
     /** @test */
@@ -364,6 +310,15 @@ class BuilderTest extends TestCase
     }
 
     /** @test */
+    public function enhance()
+    {
+        $image = Cloudinary::id('test.png')
+            ->enhance();
+
+        $this->assertCorrectTransformations('e_viesus_correct', $image);
+    }
+
+    /** @test */
     public function fade()
     {
         $image = Cloudinary::id('test.png')
@@ -373,12 +328,21 @@ class BuilderTest extends TestCase
     }
 
     /** @test */
-    public function fill_light()
+    public function fillLight()
     {
         $image = Cloudinary::id('test.png')
             ->fillLight(200);
 
         $this->assertCorrectTransformations('e_fill_light:200', $image);
+    }
+
+    /** @test */
+    public function filter()
+    {
+        $image = Cloudinary::id('test.png')
+            ->filter('zorro');
+
+        $this->assertCorrectTransformations('e_art:zorro', $image);
     }
 
     /** @test */
@@ -426,6 +390,50 @@ class BuilderTest extends TestCase
         $this->assertCorrectTransformations('e_hue:50', $image);
     }
 
+    /** @test */
+    public function improve()
+    {
+        $image = Cloudinary::id('test.png')
+            ->improve('outdoor');
+
+        $this->assertCorrectTransformations('e_improve:outdoor', $image);
+    }
+
+    /** @test */
+    public function sharpen()
+    {
+        $image = Cloudinary::id('test.png')
+            ->sharpen();
+
+        $this->assertCorrectTransformations('e_sharpen', $image);
+    }
+
+    /** @test */
+    public function overlay()
+    {
+        $image = Cloudinary::id('test.png')
+            ->overlay('screen', 'overlay');
+
+        $this->assertCorrectTransformations('e_screen,overlay', $image);
+    }
+
+    /** @test */
+    public function shadow()
+    {
+        $image = Cloudinary::id('test.png')
+            ->shadow(50, 'rgb:ff0000', 10, 10);
+
+        $this->assertCorrectTransformations('co_rgb:ff0000,e_shadow:50,x_10,y_10', $image);
+    }
+
+    /** @test */
+    public function oilpaint()
+    {
+        $image = Cloudinary::id('test.png')
+            ->oilPaint(70);
+
+        $this->assertCorrectTransformations('e_oil_paint:70', $image);
+    }
     /** @test */
     public function loop() 
     {
@@ -478,6 +486,15 @@ class BuilderTest extends TestCase
             ->red(50);
 
         $this->assertCorrectTransformations('e_red:50', $image);
+    }
+
+    /** @test */
+    public function replaceColor() 
+    {
+        $image = Cloudinary::id('test.png')
+            ->replaceColor('blue', 8);
+
+        $this->assertCorrectTransformations('e_replace_color:blue:8', $image);
     }
 
     /** @test */

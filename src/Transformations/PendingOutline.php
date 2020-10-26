@@ -2,6 +2,8 @@
 
 namespace TeamZac\Cloudinary\Transformations;
 
+use TeamZac\Cloudinary\Color;
+
 class PendingOutline
 {
     public $mode;
@@ -35,14 +37,9 @@ class PendingOutline
         return $this;
     }
 
-    public function color($color, $hex = null)
+    public function color($color)
     {
-        if ($hex) {
-            $this->color = $color.':'.$hex;
-        } else {
-            $this->color = $color;
-        }
-
+        $this->color = ($color instanceof Color) ? $color->getValue() : $color;
         return $this;
     }
 
